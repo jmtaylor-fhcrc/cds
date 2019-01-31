@@ -70,10 +70,10 @@ Ext.define('Connector.view.NavigationView', {
             var ret = '';
             if (me.arrow == 'left') {
                 ret += '<span class="' + me.arrow +'-arrow"></span>';
-                ret += '<span class="right-label">' + val + '</span>';
+                ret += '<span class="right-label ' +  val.replace(" ", "-").toLowerCase() + '">' + val + '</span>';
             }
             else if (me.arrow == 'right') {
-                ret += '<span class="left-label">' + val + '</span>';
+                ret += '<span class="left-label '  +  val.replace(" ", "-").toLowerCase() + '">' + val + '</span>';
                 ret += '<span class="' + me.arrow +'-arrow"></span>';
             }
             return ret;
