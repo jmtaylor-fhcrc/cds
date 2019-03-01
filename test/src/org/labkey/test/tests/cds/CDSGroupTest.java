@@ -23,9 +23,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
-import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
-import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
 import org.openqa.selenium.By;
@@ -36,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @Category({})
@@ -191,7 +188,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         // Verify back button works
         click(CDSHelper.Locators.pageHeaderBack());
-        waitForText(CDSHelper.HOME_PAGE_HEADER);
+        cds.waitForHome();
         waitForText(STUDY_GROUP);
 
         // Verify delete works.

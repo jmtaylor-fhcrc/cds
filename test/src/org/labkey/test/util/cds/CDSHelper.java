@@ -16,6 +16,7 @@
 package org.labkey.test.util.cds;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.hamcrest.CoreMatchers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -130,7 +131,7 @@ public class CDSHelper
     public static final String PROT_R1 = "r1";
     public static final String PROT_R2 = "r2";
     public static final String PROT_R3 = "r3";
-    public static final String PROT_R4 =  "r4";
+    public static final String PROT_R4 = "r4";
     public static final String PROT_R5 = "r5";
     public static final String PROT_R6 = "r6";
     public static final String PROT_R7 = "r7";
@@ -340,7 +341,7 @@ public class CDSHelper
     public static final String VIRUS_W61D = "W61D(TCLA).71";
     public static final String VIRUS_WITO = "WITO.LucR.T2A.ecto";
     public static final String[] VIRUSES = {VIRUS_Q23, VIRUS_BX08, VIRUS_MN3, VIRUS_SF162, VIRUS_SS1196, VIRUS_REJO, VIRUS_RHPA,
-            VIRUS_SC422, VIRUS_TRO, VIRUS_WITO4, VIRUS_92RW, VIRUS_TV1 , VIRUS_NP03, VIRUS_TH023, VIRUS_9020, VIRUS_96ZM,
+            VIRUS_SC422, VIRUS_TRO, VIRUS_WITO4, VIRUS_92RW, VIRUS_TV1, VIRUS_NP03, VIRUS_TH023, VIRUS_9020, VIRUS_96ZM,
             VIRUS_97ZA, VIRUS_BAL26, VIRUS_C1080, VIRUS_C3347, VIRUS_CAAN, VIRUS_CH58, VIRUS_CH77, VIRUS_CM244, VIRUS_CE1086,
             VIRUS_CE1176, VIRUS_CE2010, VIRUS_DU151, VIRUS_DU422, VIRUS_MW965, VIRUS_R2184, VIRUS_REJOLUC, VIRUS_RHPALUC,
             VIRUS_SC22, VIRUS_SIVNL, VIRUS_SIVLUC, VIRUS_SVA, VIRUS_TV1LUC, VIRUS_W61D, VIRUS_WITO};
@@ -472,11 +473,11 @@ public class CDSHelper
     public static final String ELISPOT_MAGNITUDE_BACKGROUND_SUB = "Magnitude (SFC) - Background subtracted";
     public static final String ELISPOT_MAGNITUDE_RAW = "Magnitude (SFC) - Raw";
     public static final String ELISPOT_PEPTIDE_POOL = "Peptide Pool";
-    public static final String ELISPOT_PROTEIN =  "Protein";
-    public static final String ELISPOT_PROTEIN_PANEL =  "Protein Panel";
-    public static final String ELISPOT_RESPONSE =  "Response call";
-    public static final String ELISPOT_SPECIMEN =  "Specimen type";
-    public static final String ELISPOT_VACCINE =  "Antigen vaccine match indicator";
+    public static final String ELISPOT_PROTEIN = "Protein";
+    public static final String ELISPOT_PROTEIN_PANEL = "Protein Panel";
+    public static final String ELISPOT_RESPONSE = "Response call";
+    public static final String ELISPOT_SPECIMEN = "Specimen type";
+    public static final String ELISPOT_VACCINE = "Antigen vaccine match indicator";
 
     public static final String ICS = "ICS (Intracellular Cytokine Staining)";
     public static final String ICS_ANTIGEN = "Antigen name";
@@ -581,8 +582,6 @@ public class CDSHelper
     public static final String TIME_POINTS_ALIGN_FIRST_VAC = "First Vaccination";
     public static final String TIME_POINTS_ALIGN_LAST_VAC = "Last Vaccination";
 
-    public static final String HOME_PAGE_HEADER = "Welcome to the CAVD DataSpace.";
-
     public static final String PLOT_POINT_HIGHLIGHT_COLOR = "#41C49F";
 
     // Dimensions used to set the browser window.
@@ -590,7 +589,7 @@ public class CDSHelper
     public static Dimension defaultWindowSize = new Dimension(1280, 1024);
 
     // Admin only import tables
-    public static  String[] IMPORT_TABLES_WITH_ADMIN_ACCESS = {"import_ics", "import_nab", "import_els_ifng", "import_bama",
+    public static String[] IMPORT_TABLES_WITH_ADMIN_ACCESS = {"import_ics", "import_nab", "import_els_ifng", "import_bama",
             "import_studypartgrouparmsubject", "import_studypartgrouparmproduct", "import_studypartgrouparmvisit", "import_studypartgrouparmvisitproduct",
             "import_studypartgrouparm", "import_studysubject"};
 
@@ -607,6 +606,7 @@ public class CDSHelper
     public static final String NAB_MAB_IC50_REPORT = "NAb ic50 plot";
 
     public static final Map<String, String> siteGroupRoles;
+
     static
     {
         siteGroupRoles = new HashMap<>();
@@ -617,6 +617,7 @@ public class CDSHelper
     }
 
     public static final Map<String, List<String>> siteGroupStudies;
+
     static
     {
         siteGroupStudies = new HashMap<>();
@@ -650,7 +651,7 @@ public class CDSHelper
         // Need to special case the "all" checkbox case.
         if (elements[0].toLowerCase().contains("all"))
         {
-            finalId = firstId.replaceAll(" " , "_") + "-";
+            finalId = firstId.replaceAll(" ", "_") + "-";
         }
         else
         {
@@ -660,7 +661,7 @@ public class CDSHelper
 
         for (String temp : elements)
         {
-            temp = temp.replaceAll(" " , "_");
+            temp = temp.replaceAll(" ", "_");
             finalId += temp + "-";
         }
         if (finalId.length() > 0)
@@ -677,7 +678,7 @@ public class CDSHelper
 
         for (String temp : elements)
         {
-            temp = temp.replaceAll(" " , "_");
+            temp = temp.replaceAll(" ", "_");
             finalId += temp + "-";
         }
         if (finalId.length() > 0)
@@ -718,11 +719,21 @@ public class CDSHelper
 
     private void afterInApplication()
     {
+        waitForHome();
         _test.assertElementNotPresent(Locator.linkWithText("Home"));
-        _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
-        _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
+    }
+
+    public void waitForHome()
+    {
+        waitForHome(_test);
+    }
+
+    private static void waitForHome(WebDriverWrapper wdw)
+    {
+        wdw.waitForElement(Locator.tagContainingText("h1", "Welcome to the CAVD DataSpace."));
+        wdw.waitForElement(Locator.tagWithClass("body", "appready"));
     }
 
     @LogMethod(quiet = true)
@@ -871,28 +882,33 @@ public class CDSHelper
             });
         }
 
+        // Truncate long group names with ellipses. See Group.js _groupEditSave()
+        String truncatedGroupName = name.length() > 15 ? name.substring(0, 12) + "..." : name;
+        String expectedMessage = "Group \"" + truncatedGroupName + "\" saved.";
+
         // verify group save messaging
         //ISSUE 19997
-        _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
+        String actualMessage = _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]")).getText();
+        Assert.assertThat("Wrong save message", actualMessage, CoreMatchers.containsString(expectedMessage));
 
         return true;
     }
 
-    public void goToGroup(String groupName)
+    public void selectGroup(String groupName)
     {
         Locator groupLabelLocator = Locator.xpath("//div[contains(@class, 'grouprow')]/div[contains(@class,'grouplabel')][@title='" + groupName + "']");
 
-        goToAppHome();
         _test.waitForElementToBeVisible(groupLabelLocator);
         _test.click(groupLabelLocator);
-        _test.waitForText("Edit details");
+        _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(CDSHelper.Locators.cdsButtonLocator("Edit details")));
 
     }
 
     public boolean updateSharedGroupDetails(String groupName, @Nullable String newName, @Nullable String newDescription,
                                          @Nullable Boolean newSharedStatus)
     {
-        goToGroup(groupName);
+        goToAppHome();
+        selectGroup(groupName);
         _test.click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
         _test.waitForText("Shared group:");
 
@@ -931,7 +947,7 @@ public class CDSHelper
         }
         else
         {
-            _test.waitForText(HOME_PAGE_HEADER);
+            waitForHome();
             return true;
         }
     }
@@ -1120,8 +1136,7 @@ public class CDSHelper
     public void goToAppHome()
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
-        _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
-        _test.sleep(1000);
+        waitForHome();
     }
 
     public void goToSummary()
@@ -1327,7 +1342,7 @@ public class CDSHelper
         Locators.cdsButtonLocator("Delete").findElement(_test.getWrappedDriver()).click();
         _test.waitForText("Are you sure you want to delete");
         Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(_test.getWrappedDriver()).click();
-        _test.waitForText(HOME_PAGE_HEADER);
+        waitForHome();
         _test.waitForElementToDisappear(groupListing);
         BaseWebDriverTest.sleep(500);
         _test._ext4Helper.waitForMaskToDisappear();
@@ -1694,7 +1709,7 @@ public class CDSHelper
 
     public enum NavigationLink
     {
-        HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
+        HOME("Home", CDSHelper::waitForHome),
         LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
         SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest with assay data in DataSpace.")),
         PLOT("Plot data", Locator.tagWithClass("a", "colorbtn")),

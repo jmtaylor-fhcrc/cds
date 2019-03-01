@@ -1,9 +1,9 @@
 package org.labkey.test.tests.cds;
 
-import org.junit.Test;
 import org.labkey.test.Locator;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
+import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 
@@ -59,7 +59,6 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         assertTrue("Failed to update " + (isMab() ? "mab " : "") + "group", result);
         cds.goToAppHome();
         cds.deleteGroupFromSummaryPage(privateGroupOneName);
-        _stopImpersonatingRole();
 
         _impersonateRole("Editor");
         _composeGroup();
@@ -67,7 +66,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         assertTrue("Failed to create new shared " + (isMab() ? "mab " : "") + "group as Editor.", result);
         cds.goToAppHome();
         cds.deleteGroupFromSummaryPage(privateGroupTwoName);
-        _stopImpersonatingRole();
+        _stopImpersonating();
 
         String rootContainer = getProjectName();
 
@@ -75,9 +74,6 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         _userHelper.createUser(NEW_USER_ACCOUNTS[1], false, true);
         _userHelper.createUser(NEW_USER_ACCOUNTS[2], false, true);
 
-        goToProjectHome();
-
-        Ext4Helper.resetCssPrefix();
         _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
         _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
         _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
@@ -87,36 +83,30 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         for (Integer itr : studyIndices)
         {
             String studyName = CDSHelper.PROTS[itr];
-            goToProjectHome(rootContainer + "/" + studyName);
-            _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[0], "Editor");
-            _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[1], "Reader");
-            _apiPermissionsHelper.setUserPermissions(NEW_USER_ACCOUNTS[2], "Editor");
+            String containerPath = rootContainer + "/" + studyName;
+            _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[0], "Editor", PermissionsHelper.MemberType.user, containerPath);
+            _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[1], "Reader", PermissionsHelper.MemberType.user, containerPath);
+            _apiPermissionsHelper.addMemberToRole(NEW_USER_ACCOUNTS[2], "Editor", PermissionsHelper.MemberType.user, containerPath);
         }
-        Ext4Helper.setCssPrefix("x-");
 
         //As an editor, make a shared group and a private group
         _impersonateUser(NEW_USER_ACCOUNTS[0]);
         _composeGroup();
         cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], false, false, isMab());
         cds.saveGroup(sharedGroupName, "", true, false, isMab());
-        _stopImpersonatingRole();
-
 
         //Impersonate the reader
         _impersonateUser(NEW_USER_ACCOUNTS[1]);
-        cds.enterApplication();
 
-        Locator sharedGroupLoc = getSharedGroupLoc(sharedGroupName);
         //Verify that private group is not shared and that public group is
         Locator mineHeader = Locator.xpath("//h2[contains(text(), 'My saved groups and plots')][contains(@class, 'section-title')]");
         assertElementNotPresent("User should not have any of their own " + (isMab() ? "mab " : "") + "groups.", mineHeader);
         assertElementNotPresent(privateGroupOneName + " should not been visible to this user",
                 Locator.xpath("//div[contains(@class, 'grouplabel')][contains(text(), '" + privateGroupOneName + "')]"));
-        assertTrue("Shared " + (isMab() ? "mab " : "") + "group should be visible", isElementPresent(sharedGroupLoc));
+        assertTrue("Shared " + (isMab() ? "mab " : "") + "group should be visible", isElementPresent(getSharedGroupLoc(sharedGroupName)));
 
         //Examine shared group
-        click(sharedGroupLoc);
-        waitForText("Edit details");
+        cds.selectGroup(sharedGroupName);
 
         log("verify that reader cannot edit");
         click(CDSHelper.Locators.cdsButtonLocator("Edit details"));
@@ -133,9 +123,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         click(CDSHelper.Locators.cdsButtonLocator("OK", "x-toolbar-item").notHidden());
 
         //switch to other editor account
-        _stopImpersonatingUser();
         _impersonateUser(NEW_USER_ACCOUNTS[2]);
-        cds.enterApplication();
 
         log("verify that another editor can update shared group");
         boolean updateSuccess = cds.updateSharedGroupDetails(sharedGroupName, null, "Updated Description", null);
@@ -146,8 +134,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         assertFalse("Expected to fail " + (isMab() ? "mab " : "") + "group update. Should not be able to unshared other user's group", updateSuccess);
 
         //delete group
-        click(sharedGroupLoc);
-        waitForText("Edit details");
+        cds.selectGroup(sharedGroupName);
         click(CDSHelper.Locators.cdsButtonLocator("Delete"));
         waitForText("Are you sure you want to delete");
         click(CDSHelper.Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden());
@@ -158,7 +145,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
                         "[contains(text(), 'Curated groups and plots')]" +
                         "/following::div[contains(@class, 'grouprow')]" +
                         "/div[contains(text(), '" + sharedGroupName + "')]"));
-        _stopImpersonatingUser();
+        _stopImpersonating();
 
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[0]);
         _userHelper.deleteUser(NEW_USER_ACCOUNTS[1]);
@@ -175,22 +162,20 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
 
     protected void _impersonateRole(String role)
     {
+        stopImpersonatingHTTP();
         doActionInStandardLabkey(() -> impersonateRole(role));
-    }
-
-    protected void _stopImpersonatingRole()
-    {
-        doActionInStandardLabkey(this::stopImpersonatingRole);
     }
 
     protected void _impersonateUser(String user)
     {
+        stopImpersonatingHTTP();
         doActionInStandardLabkey(() -> impersonate(user));
     }
 
-    protected void _stopImpersonatingUser()
+    protected void _stopImpersonating()
     {
-        doActionInStandardLabkey(this::stopImpersonating);
+        stopImpersonatingHTTP();
+        refresh();
     }
 
     protected void doActionInStandardLabkey(Runnable action)
