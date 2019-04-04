@@ -96,7 +96,10 @@ public class CDSImportTask extends TaskRefTaskImpl
         new TSVCopyConfig("ELS_IFNg", "AssayELS_IFNg"),
         new TSVCopyConfig("NAB", "AssayNAB"),
         new TSVCopyConfig("BAMA", "AssayBAMA"),
-        new TSVCopyConfig("NABMAb", "AssayNABMAb")
+        new TSVCopyConfig("NABMAb", "AssayNABMAb"),
+
+	// Tours
+	new TSVCopyConfig("Tours")
     };
 
     @Override
