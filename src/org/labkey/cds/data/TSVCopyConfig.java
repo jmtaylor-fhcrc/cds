@@ -56,7 +56,7 @@ public class TSVCopyConfig extends CDSImportCopyConfig
         File tsvFile = getByExtension(dir, ".tsv", ".txt");
         if (null == tsvFile || !tsvFile.exists())
         {
-            context.getErrors().addRowError(new ValidationException("Could not find data file: \'" + tsvFileName + "\' (.tsv, .txt)."));
+            context.getErrors().addRowError(new ValidationException("Could not find data file: \'" + tsvFileName + "\' (.tsv, .txt). Is the import path set properly, or is it empty? Current directory is: " + dir));
             return null;
         }
 
