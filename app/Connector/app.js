@@ -36,5 +36,3 @@ launchApp(cube);
 if (LABKEY.user.isSignedIn) {
     cube.load();
 }
-
-// load tour files

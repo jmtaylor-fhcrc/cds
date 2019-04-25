@@ -110,6 +110,7 @@
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Ajax.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Utils.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Utils.js"></script>
+    <!-- <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/dom/Tour.js"></script> -->
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/ActionURL.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/Filter.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/clientapi/core/FieldKey.js"></script>
@@ -156,6 +157,7 @@
     <!-- CDS Module Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/measure.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour.js"></script>
 
     <!-- Connector Application -->
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>

@@ -6,11 +6,11 @@ ALTER TABLE cds.publication ADD COLUMN publication_label VARCHAR(250);
 CREATE TABLE cds.import_tours (
   title       character varying(500)      ,
   description character varying(4000)     ,
-  container   entityid                    ,
+  container   public.entityid             ,
   created     timestamp without time zone ,
-  createdby   userid                      ,
+  createdby   public.userid               ,
   modified    timestamp without time zone ,
-  modifiedby  userid                      ,
+  modifiedby  public.userid               ,
   json        character varying           ,
   mode        integer                      
 );
