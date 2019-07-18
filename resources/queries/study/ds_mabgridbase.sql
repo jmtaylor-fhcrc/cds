@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 select
+  MabMix.mab_id,
   MAB.mab_mix_id,
   MAB.container,
   prot as study,
@@ -37,10 +38,10 @@ select
   target_cell,
   lab_code,
   summary_level,
-
   curve_id,
-
   MixMeta.mab_mix_name_std
-FROM study.NABMAb as MAB
+  
+FROM study.NABMAb as Mab
   LEFT JOIN cds.MAbMixMetadata as MixMeta on (MixMeta.mab_mix_id = MAB.mab_mix_id)
-where MAB.specimen_concentration_id = 8;
+  LEFT JOIN cds.MAbMix as MabMix on (MabMix.mab_mix_id = MixMeta.mab_mix_id)
+WHERE MAB.specimen_concentration_id = 8;
