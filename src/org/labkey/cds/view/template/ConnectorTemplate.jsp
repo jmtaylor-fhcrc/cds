@@ -156,6 +156,8 @@
     <!-- CDS Module Dependencies -->
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/cube.js"></script>
     <script type="text/javascript" src="<%=text(contextPath)%>/Connector/measure.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_find_subjects.js"></script>
+    <script type="text/javascript" src="<%=text(contextPath)%>/Connector/tour_learn_about.js"></script>
 
     <!-- Connector Application -->
     <script type="text/javascript" src="<%=text(srcPath)%>/types/Filter.js"></script>
