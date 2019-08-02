@@ -29,7 +29,7 @@ Ext.define('Connector.app.view.StudyProducts', {
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
-                    '<h2>{product_name:htmlEncode}</h2>',
+                    '<h2 id={[values.product_name.replace(/[^a-zA-Z0-9]+/g, "").substring(0,10)]}>{product_name:htmlEncode}</h2>',
                     '<div class="detail-description-text"><p class="block-with-text">{product_description:htmlEncode}</p></div>',
                 '</div>'
         )
